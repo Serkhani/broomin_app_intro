@@ -12,9 +12,12 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
     circleAnimCon = AnimationController(
         vsync: this,
         upperBound: 2 * math.pi,
-        duration: const Duration(seconds: 3));
+        duration: const Duration(seconds: 2));
     bAnimCon =
-        AnimationController(vsync: this, duration: const Duration(seconds: 3));
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    confettiAnimCon = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 70));
+
     super.onInit();
   }
 
@@ -31,6 +34,14 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
     });
     bAnimCon.addListener(() {
       update(['circle&b']);
+    });
+    bAnimCon.addStatusListener((status) {
+      if (bAnimCon.isCompleted) {
+        confettiAnimCon.forward();
+      }
+    });
+    confettiAnimCon.addListener(() {
+      update(['confetti']);
     });
     super.onReady();
   }

@@ -33,7 +33,7 @@ class HomeView extends GetView<HomeController> {
                 id: 'confetti',
                 builder: (_) {
                   return CustomPaint(
-                    foregroundPainter: ConfettiPainter(),
+                    foregroundPainter: ConfettiPainter(progress: controller.confettiAnimCon.value),
                     size: const Size(300.0, (300.0 * 0.625)),
                   );
                 },
@@ -47,6 +47,8 @@ class HomeView extends GetView<HomeController> {
 }
 
 class ConfettiPainter extends CustomPainter {
+  final double progress;
+  const ConfettiPainter({required this.progress});
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
@@ -67,7 +69,15 @@ class ConfettiPainter extends CustomPainter {
     path.moveTo(size.width * 0.3400000, size.height * 0.9160000);
     path.lineTo(size.width * 0.3400000, size.height * 0.9880000);
 
-    canvas.drawPath(path, paint);
+    animatePath(canvas, path, paint, progress);
+  }
+
+  animatePath(Canvas canvas, Path path, Paint paint, double progress) {
+    PathMetrics pathMetrics = path.computeMetrics();
+    for (PathMetric pathMetric in pathMetrics) {
+      path = pathMetric.extractPath(0.0, progress * pathMetric.length);
+      canvas.drawPath(path, paint);
+    }
   }
 
   @override
@@ -160,13 +170,13 @@ class BPainter extends CustomPainter {
   animatePath(Canvas canvas, Path path, Paint paint, double progress) {
     PathMetrics pathMetrics = path.computeMetrics();
     for (PathMetric pathMetric in pathMetrics) {
-      path = pathMetric.extractPath(0.0, progress*pathMetric.length);
+      path = pathMetric.extractPath(0.0, progress * pathMetric.length);
       canvas.drawPath(path, paint);
     }
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return progress>=1.0;
+    return progress >= 1.0;
   }
 }
