@@ -11,23 +11,33 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Broomin', style: TextStyle(color: Colors.black),),
+        title: const Text(
+          'Broomin',
+          style: TextStyle(color: Colors.black),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         centerTitle: true,
       ),
       body: Center(
-        child: CustomPaint(
-          foregroundPainter: BPainter(),
-          size: Size(
-              300.0,
-              (300.0 * 0.625)
-                  .toDouble()),
-          painter:  CirclePainter(),
-          child: CustomPaint(
-            foregroundPainter:ConfettiPainter(),
-            size: const Size(300.0, (300.0*0.625)),
-          ),
+        child: GetBuilder<HomeController>(
+          id: 'circle&b',
+          builder: (_) {
+            return CustomPaint(
+              foregroundPainter: BPainter(),
+              size: Size(300.0, (300.0 * 0.625).toDouble()),
+              painter: CirclePainter(progress: controller.circleAnimCon.value),
+              child: GetBuilder<HomeController>(
+                id: 'confetti',
+                builder: (_) {
+                  return CustomPaint(
+                    foregroundPainter: ConfettiPainter(),
+                    size: const Size(300.0, (300.0 * 0.625)),
+                  );
+                },
+              ),
+            );
+          },
         ),
       ),
     );
@@ -35,55 +45,62 @@ class HomeView extends GetView<HomeController> {
 }
 
 class ConfettiPainter extends CustomPainter {
-
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-    ..strokeWidth= 5.0
-    ..style= PaintingStyle.stroke
-    ..color = const Color.fromARGB(255, 84, 54, 88);
+      ..strokeWidth = 5.0
+      ..style = PaintingStyle.stroke
+      ..color = const Color.fromARGB(255, 84, 54, 88);
     Path path = Path();
-    path.moveTo(size.width*0.6787500,size.height*0.1300000);
-    path.lineTo(size.width*0.6887500,size.height*0.0740000);
-    path.moveTo(size.width*0.7050000,size.height*0.1500000);
-    path.lineTo(size.width*0.7350000,size.height*0.0800000);
-    path.moveTo(size.width*0.7237500,size.height*0.1800000);
-    path.lineTo(size.width*0.7600000,size.height*0.1400000);
-    path.moveTo(size.width*0.2937500,size.height*0.8760000);
-    path.lineTo(size.width*0.2562500,size.height*0.9120000);
-    path.moveTo(size.width*0.3125000,size.height*0.9120000);
-    path.lineTo(size.width*0.2825000,size.height*0.9760000);
-    path.moveTo(size.width*0.3400000,size.height*0.9160000);
-    path.lineTo(size.width*0.3400000,size.height*0.9880000);
+    path.moveTo(size.width * 0.6787500, size.height * 0.1300000);
+    path.lineTo(size.width * 0.6887500, size.height * 0.0740000);
+    path.moveTo(size.width * 0.7050000, size.height * 0.1500000);
+    path.lineTo(size.width * 0.7350000, size.height * 0.0800000);
+    path.moveTo(size.width * 0.7237500, size.height * 0.1800000);
+    path.lineTo(size.width * 0.7600000, size.height * 0.1400000);
+    path.moveTo(size.width * 0.2937500, size.height * 0.8760000);
+    path.lineTo(size.width * 0.2562500, size.height * 0.9120000);
+    path.moveTo(size.width * 0.3125000, size.height * 0.9120000);
+    path.lineTo(size.width * 0.2825000, size.height * 0.9760000);
+    path.moveTo(size.width * 0.3400000, size.height * 0.9160000);
+    path.lineTo(size.width * 0.3400000, size.height * 0.9880000);
 
     canvas.drawPath(path, paint);
-  
   }
 
   @override
   bool shouldRepaint(ConfettiPainter oldDelegate) => true;
-
 }
 
-
 class CirclePainter extends CustomPainter {
+  final double progress;
+
+  const CirclePainter({required this.progress});
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint0 = Paint()..color = const Color.fromARGB(255, 84, 54, 88);
-    Paint paint = Paint()..style = PaintingStyle.stroke..strokeWidth=7.0;
-    
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), 60.0, paint0);
+    Paint paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 7.0;
     canvas.drawArc(
         Rect.fromCircle(
-            center: Offset((size.width / 2)+10.0, (size.height / 2)-5.0), radius: 60.0),
+            center: Offset(size.width / 2, size.height / 2), radius: 60.0),
+        0.0,
+        progress,
+        false,
+        paint0);
+    canvas.drawArc(
+        Rect.fromCircle(
+            center: Offset((size.width / 2) + 10.0, (size.height / 2) - 5.0),
+            radius: 60.0),
         0,
-        2 * math.pi,
+        progress,
         false,
         paint);
   }
 
   @override
-  bool shouldRepaint(CirclePainter oldDelegate) => true;
+  bool shouldRepaint(CirclePainter oldDelegate) => progress>=2*math.pi;
 }
 
 class BPainter extends CustomPainter {
