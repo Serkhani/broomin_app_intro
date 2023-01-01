@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -24,7 +26,7 @@ class HomeView extends GetView<HomeController> {
           id: 'circle&b',
           builder: (_) {
             return CustomPaint(
-              foregroundPainter: BPainter(),
+              foregroundPainter: BPainter(progress: controller.bAnimCon.value),
               size: Size(300.0, (300.0 * 0.625).toDouble()),
               painter: CirclePainter(progress: controller.circleAnimCon.value),
               child: GetBuilder<HomeController>(
@@ -100,10 +102,12 @@ class CirclePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CirclePainter oldDelegate) => progress>=2*math.pi;
+  bool shouldRepaint(CirclePainter oldDelegate) => progress >= 2 * math.pi;
 }
 
 class BPainter extends CustomPainter {
+  final double progress;
+  const BPainter({required this.progress});
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
@@ -150,12 +154,19 @@ class BPainter extends CustomPainter {
         size.width * 0.4812500, size.height * 0.6661000);
     path.lineTo(size.width * 0.4812500, size.height * 0.3975200);
     path.close();
+    animatePath(canvas, path, paint, progress);
+  }
 
-    canvas.drawPath(path, paint);
+  animatePath(Canvas canvas, Path path, Paint paint, double progress) {
+    PathMetrics pathMetrics = path.computeMetrics();
+    for (PathMetric pathMetric in pathMetrics) {
+      path = pathMetric.extractPath(0.0, progress*pathMetric.length);
+      canvas.drawPath(path, paint);
+    }
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+    return progress>=1.0;
   }
 }
