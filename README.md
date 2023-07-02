@@ -1,5 +1,7 @@
 # broomin_app_intro
-![Animation](https://github.com/Serkhani/broomin_app_intro/assets/66341820/fee10f72-d4d3-4ca6-8d43-be204a8268fd)
+
+https://github.com/Serkhani/broomin_app_intro/assets/66341820/fee10f72-d4d3-4ca6-8d43-be204a8268fd
+
 A new Flutter project.
 
 ## Getting Started
